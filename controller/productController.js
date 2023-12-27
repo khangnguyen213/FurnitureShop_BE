@@ -70,15 +70,14 @@ exports.getProduct = (req, res) => {
 // ADD CAUSE
 exports.addProduct = (req, res) => {
   Product.findOne({ title: req.body.title }).then((data) => {
-    // The cause title must be unique to not confuse donator
-    // If title not exist before, create
     if (!data) {
       const cause = new Product({
         title: req.body.title,
         description: req.body.description,
+        colors: req.body.colors || [],
         price: req.body.price,
         discountedprice: req.body.discountedprice,
-        image: req.body.image,
+        images: req.body.images,
       });
       cause
         .save()
@@ -93,7 +92,7 @@ exports.addProduct = (req, res) => {
       // if title existed, send an HTTP status 402
       res.statusCode = 402;
       res.statusMessage =
-        "The product's title already exist - which may confuse donors";
+        "The product's title already exist - which may confuse customer";
       return res.end();
     }
   });
