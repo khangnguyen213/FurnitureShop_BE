@@ -87,10 +87,14 @@ exports.addProduct = (req, res) => {
             res.status(201).send(product._id);
           }
         })
-        .catch((err) => res.sendStatus(500));
+        .catch((err) => {
+          res.statusCode = 400;
+          res.send(err);
+          // return res.end();
+        });
     } else {
       // if title existed, send an HTTP status 402
-      res.statusCode = 402;
+      res.statusCode = 400;
       res.statusMessage =
         "The product's title already exist - which may confuse customer";
       return res.end();
