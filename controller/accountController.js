@@ -24,9 +24,7 @@ exports.addAccount = async (req, res, next) => {
 
     if (existingAccount) {
       // Return a 402 status code if the email is already taken
-      res.statusCode = 400;
-      res.statusText = 'This email already exists';
-      return res.end();
+      return res.status(400).send('This email already exists');
     }
 
     // Create a new account instance and save it to the database
