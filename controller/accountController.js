@@ -24,7 +24,7 @@ exports.addAccount = async (req, res, next) => {
 
     if (existingAccount) {
       // Return a 402 status code if the email is already taken
-      res.statusCode = 402;
+      res.statusCode = 400;
       res.statusMessage = 'This email already exists';
       return res.end();
     }
@@ -56,7 +56,7 @@ exports.login = async (req, res) => {
       req.session.account = result;
 
       // Extract the fullname, role, and _id fields from the account object and send them as a response
-      const { fullname, role, _id } = result;
+      const { fullname, _id } = result;
       return res.status(200).send({
         fullname,
         _id,
