@@ -97,7 +97,7 @@ async function getProductDetailsInCart(req, res) {
 
   try {
     const cart = await Cart.findOne({ account: accountId }).populate(
-      'products.product'
+      'products'
     );
 
     if (!cart) {
@@ -124,12 +124,10 @@ async function getProductDetailsInCart(req, res) {
 
     return res.status(200).json({ productsInCart: productDetails });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        message: 'Error retrieving product details from cart',
-        error: error.message,
-      });
+    return res.status(500).json({
+      message: 'Error retrieving product details from cart',
+      error: error.message,
+    });
   }
 }
 
