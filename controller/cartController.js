@@ -1,5 +1,6 @@
 const Cart = require('../model/cart');
 const Product = require('../model/product');
+var mongoose = require('mongoose');
 
 async function addToCart(req, res) {
   const { accountId, productId, quantity } = req.body;
@@ -93,11 +94,11 @@ async function deleteFromCart(req, res) {
 }
 
 async function getProductDetailsInCart(req, res) {
-  const { accountId } = req.params; // Assuming accountId is passed as a parameter
+  const { accountId } = req.body; // Assuming accountId is passed as a parameter
 
   try {
     const cart = await Cart.findOne({ account: accountId }).populate(
-      'products'
+      'products.product'
     );
 
     if (!cart) {
