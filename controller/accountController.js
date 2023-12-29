@@ -1,5 +1,5 @@
 const Account = require('../model/account');
-const Cart = require('../models/cart');
+const Cart = require('../model/cart');
 
 const bcrypt = require('bcryptjs');
 
