@@ -1,4 +1,5 @@
 const Cart = require('../model/cart');
+const Product = require('../model/product');
 
 async function addToCart(req, res) {
   const { accountId, productId, quantity } = req.body;
@@ -91,8 +92,50 @@ async function deleteFromCart(req, res) {
   }
 }
 
+async function getProductDetailsInCart(req, res) {
+  const { accountId } = req.params; // Assuming accountId is passed as a parameter
+
+  try {
+    const cart = await Cart.findOne({ account: accountId }).populate(
+      'products.product'
+    );
+
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+
+    const productsInCart = cart.products;
+
+    // Extract product details from the cart
+    const productDetails = [];
+
+    for (const item of productsInCart) {
+      const product = item.product;
+      const productDetail = await Product.findById(product._id);
+
+      if (productDetail) {
+        // If product details are found, add them to the result
+        productDetails.push({
+          product: productDetail,
+          quantity: item.quantity,
+        });
+      }
+    }
+
+    return res.status(200).json({ productsInCart: productDetails });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({
+        message: 'Error retrieving product details from cart',
+        error: error.message,
+      });
+  }
+}
+
 module.exports = {
   addToCart,
   editCart,
   deleteFromCart,
+  getProductDetailsInCart,
 };

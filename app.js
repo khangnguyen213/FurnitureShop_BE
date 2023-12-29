@@ -92,6 +92,7 @@ productRouter
 // Cart Routes
 cartRouter
   .route('/')
+  .get(cartController.getProductDetailsInCart)
   .post(cartController.addToCart) // Add a product to the cart
   .put(cartController.editCart) // Edit the cart (update product quantity)
   .delete(cartController.deleteFromCart); // Delete a product from the cart
