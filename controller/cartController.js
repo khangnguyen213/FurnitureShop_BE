@@ -94,7 +94,7 @@ async function deleteFromCart(req, res) {
 }
 
 async function getProductDetailsInCart(req, res) {
-  const { accountId } = req.body; // Assuming accountId is passed as a parameter
+  const { accountId } = req.params; // Assuming accountId is passed as a parameter
 
   try {
     const cart = await Cart.findOne({ account: accountId }).populate(
