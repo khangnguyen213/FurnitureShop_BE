@@ -77,15 +77,24 @@ app.get('/', (req, res, next) => {
 
 const accountController = require('./controller/accountController');
 const productController = require('./controller/productController');
+const cartController = require('./controller/cartController');
 
 const productRouter = express.Router();
 const accountRouter = express.Router();
+const cartRouter = express.Router();
 
 // product Routes
 productRouter
   .route('/')
   .get(productController.getProduct)
   .post(productController.addProduct);
+
+// Cart Routes
+cartRouter
+  .route('/')
+  .post(cartController.addToCart) // Add a product to the cart
+  .put(cartController.editCart) // Edit the cart (update product quantity)
+  .delete(cartController.deleteFromCart); // Delete a product from the cart
 
 // Account Routes
 accountRouter
@@ -100,6 +109,7 @@ accountRouter.route('/logout').get(accountController.logout);
 // Mount the routers onto the app
 app.use('/product', productRouter);
 app.use('/account', accountRouter);
+app.use('/cart', cartRouter);
 
 mongoose
   .connect(mongodbURL)

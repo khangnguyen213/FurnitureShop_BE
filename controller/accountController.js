@@ -1,4 +1,5 @@
 const Account = require('../model/account');
+const Cart = require('../models/cart');
 
 const bcrypt = require('bcryptjs');
 
@@ -33,6 +34,8 @@ exports.addAccount = async (req, res, next) => {
       password: bcrypt.hashSync(req.body.password, 12),
     });
     await newAccount.save();
+
+    await Cart.create({ account: newAccount._id, products: [] });
 
     return res.sendStatus(200);
   } catch (error) {
