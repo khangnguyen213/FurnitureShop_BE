@@ -19,32 +19,13 @@ const app = express();
 // to trust the proxy server that your app is running behind
 app.set('trust proxy', 1);
 
-// Set up Cross-Origin Resource Sharing (CORS) middleware
 app.use(
   cors({
-    // Allow requests from http://localhost:3000
     origin: '*',
-    // origin: [
-    //   'https://charitee-rj-tw.netlify.app',
-    //   'https://charitee-fe.vercel.app',
-    // ],
-    // Allow POST, PUT, GET, OPTIONS, and HEAD methods
     methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD', 'DELETE'],
-    // Allow credentials to be passed with requests
     credentials: true,
   })
 );
-
-// Set up session management middleware
-// app.use(
-//   session({
-//     secret: 'my secret',
-//     resave: false,
-//     saveUninitialized: false,
-//     cookie: { sameSite: 'none', secure: true, maxAge: 1000 * 60 * 60 },
-//     store: store,
-//   })
-// );
 
 app.use(
   session({

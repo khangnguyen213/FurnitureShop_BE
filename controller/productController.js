@@ -6,8 +6,8 @@ exports.getProduct = (req, res) => {
   let findOpts = {};
 
   // If there is a causeID in the query parameters, add it as a filter.
-  if (req.query.productID) {
-    findOpts._id = req.query.productID;
+  if (req.query.productId) {
+    findOpts._id = req.query.productId;
   }
   // If there is a keyword in the query parameters, construct a regex to search
   // for titles and descriptions that match that keyword.
