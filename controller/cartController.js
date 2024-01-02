@@ -123,7 +123,7 @@ async function getProductDetailsInCart(req, res) {
       }
     }
 
-    return res.status(200).json({ productsInCart: productDetails });
+    return res.status(200).json({ products: productDetails });
   } catch (error) {
     return res.status(500).json({
       message: 'Error retrieving product details from cart',
