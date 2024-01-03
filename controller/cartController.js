@@ -106,24 +106,34 @@ async function getProductDetailsInCart(req, res) {
     }
 
     const productsInCart = cart.products;
-
-    // Extract product details from the cart
     const productDetails = [];
+    let totalPrice = 0;
+    let totalDiscountedPrice = 0;
 
     for (const item of productsInCart) {
       const product = item.product;
       const productDetail = await Product.findById(product._id);
 
       if (productDetail) {
-        // If product details are found, add them to the result
+        const { price, discountedprice } = productDetail;
+        const quantity = item.quantity;
+
+        totalPrice += price * quantity;
+        totalDiscountedPrice += (discountedprice || price) * quantity;
+
         productDetails.push({
           product: productDetail,
-          quantity: item.quantity,
+          quantity,
         });
       }
     }
 
-    return res.status(200).json({ products: productDetails });
+    return res.status(200).json({
+      products: productDetails,
+      totalPrice,
+      totalDiscounted: totalPrice - totalDiscountedPrice,
+      totalDiscountedPrice,
+    });
   } catch (error) {
     return res.status(500).json({
       message: 'Error retrieving product details from cart',
