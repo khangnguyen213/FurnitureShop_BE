@@ -5,7 +5,7 @@ async function addToCart(req, res) {
   const { accountId, productId, quantity } = req.body;
 
   try {
-    let cart = await Cart.findOne({ account: accountId });
+    let cart = await Cart.findOne({ account: accountId, status: 'pending' });
 
     if (!cart) return res.status(404).json({ message: 'Cart not found' });
 
@@ -37,7 +37,7 @@ async function editCart(req, res) {
   const { accountId, productId, newQuantity } = req.body;
 
   try {
-    let cart = await Cart.findOne({ account: accountId });
+    let cart = await Cart.findOne({ account: accountId, status: 'pending' });
 
     if (!cart) return res.status(404).json({ message: 'Cart not found' });
 
@@ -65,7 +65,7 @@ async function deleteFromCart(req, res) {
   const { accountId, productId } = req.body;
 
   try {
-    let cart = await Cart.findOne({ account: accountId });
+    let cart = await Cart.findOne({ account: accountId, status: 'pending' });
 
     if (!cart) return res.status(404).json({ message: 'Cart not found' });
 
@@ -97,9 +97,10 @@ async function getProductDetailsInCart(req, res) {
   const accountId = req.query.id;
 
   try {
-    const cart = await Cart.findOne({ account: accountId }).populate(
-      'products.product'
-    );
+    const cart = await Cart.findOne({
+      account: accountId,
+      status: 'pending',
+    }).populate('products.product');
 
     if (!cart) {
       return res.status(404).json({ message: 'Cart not found' });

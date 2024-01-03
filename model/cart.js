@@ -19,6 +19,11 @@ const cartSchema = new mongoose.Schema({
       },
     },
   ],
+  status: {
+    type: String,
+    enum: ['pending', 'favorite', 'purchased'],
+    default: 'pending',
+  },
 });
 
 module.exports = mongoose.model('Cart', cartSchema);

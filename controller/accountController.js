@@ -35,7 +35,11 @@ exports.addAccount = async (req, res, next) => {
     });
     await newAccount.save();
 
-    await Cart.create({ account: newAccount._id, products: [] });
+    await Cart.create({
+      account: newAccount._id,
+      products: [],
+      status: 'pending',
+    });
 
     return res.sendStatus(200);
   } catch (error) {

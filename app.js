@@ -59,10 +59,12 @@ app.get('/', (req, res, next) => {
 const accountController = require('./controller/accountController');
 const productController = require('./controller/productController');
 const cartController = require('./controller/cartController');
+const receiptController = require('./controller/receiptController');
 
 const productRouter = express.Router();
 const accountRouter = express.Router();
 const cartRouter = express.Router();
+const receiptRouter = express.Router();
 
 // product Routes
 productRouter
@@ -84,6 +86,11 @@ accountRouter
   .get(accountController.getAccount)
   .post(accountController.addAccount);
 
+receiptRouter
+  .route('/')
+  .get(receiptController.getReceipt)
+  .post(receiptController.createReceipt);
+
 accountRouter.route('/login').post(accountController.login);
 
 accountRouter.route('/logout').get(accountController.logout);
@@ -92,6 +99,7 @@ accountRouter.route('/logout').get(accountController.logout);
 app.use('/product', productRouter);
 app.use('/account', accountRouter);
 app.use('/cart', cartRouter);
+app.use('/receipt', receiptRouter);
 
 mongoose
   .connect(mongodbURL)
