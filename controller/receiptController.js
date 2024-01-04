@@ -19,7 +19,7 @@ async function createReceipt(req, res) {
       return res.status(404).json({ message: 'Pending cart not found' });
     }
 
-    let totalDiscountedPrice = 0;
+    let totalPayment = 0;
     let productList = cart.products;
 
     for (const item of productList) {
@@ -29,7 +29,7 @@ async function createReceipt(req, res) {
       if (productDetail) {
         const { price, discountedprice } = productDetail;
         const quantity = item.quantity;
-        totalDiscountedPrice += (discountedprice || price) * quantity;
+        totalPayment += (discountedprice || price) * quantity;
       }
     }
 
