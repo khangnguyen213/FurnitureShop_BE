@@ -65,10 +65,7 @@ async function createReceipt(req, res) {
 async function getReceipt(req, res) {
   const { id } = req.query;
 
-  if (!id)
-    return res
-      .status(500)
-      .json({ message: 'Error fetching receipts', error: error.message });
+  if (!id) return res.status(404).json({ message: 'Account not found' });
 
   try {
     const account = await Account.findById(id);
@@ -84,11 +81,12 @@ async function getReceipt(req, res) {
       })
       .populate({
         path: 'productList.product',
-        select: 'title images', // Assuming 'title' and 'images' are relevant fields in the Product model
+        select: 'title price discountedprice', // Assuming 'title' and 'images' are relevant fields in the Product model
       });
 
     return res.status(200).json({ receipts });
   } catch (error) {
+    console.log(error);
     return res
       .status(500)
       .json({ message: 'Error fetching receipts', error: error.message });
