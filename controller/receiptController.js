@@ -21,6 +21,7 @@ async function createReceipt(req, res) {
 
     let totalPayment = 0;
     let productList = cart.products;
+    let returnProductList = [];
 
     for (const item of productList) {
       const product = item.product;
@@ -30,6 +31,13 @@ async function createReceipt(req, res) {
         const { price, discountedprice } = productDetail;
         const quantity = item.quantity;
         totalPayment += (discountedprice || price) * quantity;
+        returnProductList.push({
+          title: productDetail.title,
+          quantity,
+          price: discountedprice || price,
+        });
+      } else {
+        return res.status(404).json({ message: 'Product not found' });
       }
     }
 
@@ -44,7 +52,7 @@ async function createReceipt(req, res) {
     await cart.save();
 
     // Create new pending cart
-    const newCart = await Cart.create({
+    await Cart.create({
       account: accountId,
       status: 'pending',
       products: [],
@@ -52,8 +60,12 @@ async function createReceipt(req, res) {
 
     return res.status(201).json({
       message: 'Receipt created successfully',
-      receipt: newReceipt,
-      newCart,
+      receipt: {
+        productList: returnProductList,
+        buyername: account.fullname,
+        totalPayment: newReceipt.totalPayment,
+        paymentDate: newReceipt.paymentDate,
+      },
     });
   } catch (error) {
     return res
