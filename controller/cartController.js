@@ -17,9 +17,12 @@ async function addToCart(req, res) {
     if (existingProductIndex !== -1) {
       // If the product exists, update its quantity
       cart.products[existingProductIndex].quantity += quantity || 1;
+      if (cart.products[existingProductIndex].quantity < 0)
+        cart.products.splice(existingProductIndex, 1);
     } else {
       // If the product doesn't exist, add it to the cart
-      cart.products.push({ product: productId, quantity: quantity || 1 });
+      if (quantity > 0)
+        cart.products.push({ product: productId, quantity: quantity || 1 });
     }
 
     // Save the updated cart
