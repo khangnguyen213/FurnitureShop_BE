@@ -12,19 +12,14 @@ exports.getProduct = (req, res) => {
   // If there is a keyword in the query parameters, construct a regex to search
   // for titles and descriptions that match that keyword.
   if (req.query.keyword) {
-    const keywordRegEx = new RegExp(req.query.keyword, 'i');
+    const keywordRegEx = new RegExp(req.query.keyword, 'u');
     findOpts.$or = [
       { title: { $regex: keywordRegEx } },
-      { description: { $regex: keywordRegEx } },
       {
         $and: [
           { title: { $not: { $eq: null } } },
-          { description: { $not: { $eq: null } } },
           {
-            $or: [
-              { title: { $regex: keywordRegEx } },
-              { description: { $regex: keywordRegEx } },
-            ],
+            $or: [{ title: { $regex: keywordRegEx } }],
           },
         ],
       },
@@ -46,7 +41,6 @@ exports.getProduct = (req, res) => {
   //promise to count documents base on findOpts
   const countPromise = Product.countDocuments({
     ...findOpts,
-    status: { $in: ['active', 'finished'] },
   });
 
   //handle both find and count promise and response
