@@ -12,18 +12,8 @@ exports.getProduct = (req, res) => {
   // If there is a keyword in the query parameters, construct a regex to search
   // for titles and descriptions that match that keyword.
   if (req.query.keyword) {
-    const keywordRegEx = new RegExp(req.query.keyword, 'u');
-    findOpts.$or = [
-      { title: { $regex: keywordRegEx } },
-      {
-        $and: [
-          { title: { $not: { $eq: null } } },
-          {
-            $or: [{ title: { $regex: keywordRegEx } }],
-          },
-        ],
-      },
-    ];
+    const keywordRegEx = new RegExp(req.query.keyword, 'iu'); // 'i' for case-insensitive, 'u' for unicode
+    findOpts.title = { $regex: keywordRegEx };
   }
 
   // configure pagination options
