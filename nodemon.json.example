@@ -1,0 +1,9 @@
+{
+  "env": {
+    "MONGO_USER": "mongo_user",
+    "MONGO_PASSWORD": "mongo_password",
+    "MONGO_DEFAULT_DATABASE": "mongo_db",
+    "PORT": 5000,
+    "BASE_FRONTEND_API": "http://localhost:3000"
+  }
+}
