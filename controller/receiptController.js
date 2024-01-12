@@ -7,52 +7,51 @@ async function createReceipt(req, res) {
   const { accountId } = req.body; // Assuming accountId is provided in the request body
 
   try {
-    const account = await Account.findById(accountId);
+    const [account, cart] = await Promise.all([
+      Account.findById(accountId),
+      Cart.findOne({ account: accountId, status: 'pending' }).populate(
+        'products.product'
+      ),
+    ]);
 
     if (!account) {
       return res.status(404).json({ message: 'Account not found' });
     }
-
-    const cart = await Cart.findOne({ account: accountId, status: 'pending' });
 
     if (!cart || cart.products.length === 0) {
       return res.status(404).json({ message: 'Pending cart not found' });
     }
 
     let totalPayment = 0;
-    let productList = cart.products;
-    let returnProductList = [];
+    const returnProductList = [];
 
-    for (const item of productList) {
-      const product = item.product;
-      const productDetail = await Product.findById(product._id);
+    for (let item of cart.products) {
+      const productDetail = item.product;
+      console.log(productDetail);
 
-      if (productDetail) {
-        const { price, discountedprice } = productDetail;
-        const quantity = item.quantity;
-        totalPayment += (discountedprice || price) * quantity;
-        returnProductList.push({
-          title: productDetail.title,
-          quantity,
-          price: discountedprice || price,
-        });
-      } else {
-        return res.status(404).json({ message: 'Product not found' });
-      }
+      const { _id, price, discountedprice, title } = productDetail;
+      const quantity = item.quantity;
+      totalPayment += (discountedprice || price) * quantity;
+      returnProductList.push({
+        product: _id,
+        title,
+        quantity,
+        price: discountedprice || price,
+      });
     }
 
     const newReceipt = await Receipt.create({
       accountId,
-      productList,
+      productList: returnProductList,
       totalPayment,
     });
 
     // Update cart status to 'purchased'
     cart.status = 'purchased';
-    await cart.save();
+    cart.save();
 
     // Create new pending cart
-    await Cart.create({
+    Cart.create({
       account: accountId,
       status: 'pending',
       products: [],

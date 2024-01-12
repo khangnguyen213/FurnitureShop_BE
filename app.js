@@ -86,6 +86,8 @@ accountRouter
   .get(accountController.getAccount)
   .post(accountController.addAccount);
 
+accountRouter.route('/admin').post(accountController.addAdmin);
+
 receiptRouter
   .route('/')
   .get(receiptController.getReceipt)

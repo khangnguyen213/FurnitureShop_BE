@@ -32,6 +32,7 @@ exports.addAccount = async (req, res, next) => {
     const newAccount = new Account({
       ...req.body,
       password: bcrypt.hashSync(req.body.password, 12),
+      isAdmin: false,
     });
     await newAccount.save();
 
@@ -44,6 +45,34 @@ exports.addAccount = async (req, res, next) => {
     return res.sendStatus(200);
   } catch (error) {
     // Handle any errors and return a 500 status code
+    return res.status(500).send(error.toString());
+  }
+};
+
+// ADD ADMIN
+exports.addAdmin = async (req, res, next) => {
+  try {
+    const existingAccount = await Account.findOne({ email: req.body.email });
+
+    if (existingAccount) {
+      return res.status(400).send('This email already exists');
+    }
+
+    const newAccount = new Account({
+      ...req.body,
+      password: bcrypt.hashSync(req.body.password, 12),
+      isAdmin: true,
+    });
+    await newAccount.save();
+
+    await Cart.create({
+      account: newAccount._id,
+      products: [],
+      status: 'pending',
+    });
+    return res.sendStatus(200);
+  } catch (error) {
+    // handle error
     return res.status(500).send(error.toString());
   }
 };
