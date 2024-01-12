@@ -25,8 +25,11 @@ async function addToCart(req, res) {
         cart.products.push({ product: productId, quantity: quantity || 1 });
     }
 
-    // Save the updated cart
-    await cart.save();
+    // Update only the products field of the cart
+    await Cart.updateOne(
+      { _id: cart._id },
+      { $set: { products: cart.products } }
+    );
 
     return res.status(200).json({ message: 'Product added to cart', cart });
   } catch (error) {
