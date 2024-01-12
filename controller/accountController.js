@@ -78,30 +78,39 @@ exports.addAdmin = async (req, res, next) => {
 };
 
 // LOGIN
+// LOGIN
 exports.login = async (req, res) => {
   try {
     // Find an account with the email provided in the request body
-    const result = await Account.findOne({ email: req.body.email });
+    const result = await Account.findOne({ email: req.body.email }).lean();
 
-    // If an account is found and its password matches the hash in the database
-    if (result && bcrypt.compareSync(req.body.password, result.password)) {
-      // If the account's status is "active"
-      // Set the account information as the value of the "account" key in the session object
-      req.session.account = result;
+    // If an account is found
+    if (result) {
+      // Check if its password matches the hash in the database
+      const isMatch = await bcrypt.compare(req.body.password, result.password);
 
-      // Extract the fullname, role, and _id fields from the account object and send them as a response
-      const { fullname, _id } = result;
-      return res.status(200).send({
-        fullname,
-        _id,
-      });
-    } else {
-      // If no account is found or the passwords don't match, throw an error
-      throw new Error('Email or Password not correct');
+      if (isMatch) {
+        // If the account's status is "active"
+        // Set the account information as the value of the "account" key in the session object
+        req.session.account = result;
+
+        // Extract the fullname, role, and _id fields from the account object and send them as a response
+        const { fullname, _id } = result;
+        return res.status(200).send({
+          fullname,
+          _id,
+        });
+      }
     }
-  } catch (err) {
-    // If there is an error, return a 401 status code and the error message as a string
-    return res.status(401).send(err.toString());
+
+    // If no account is found or the password doesn't match, send an error response
+    return res.status(401).send({ error: 'Invalid email or password.' });
+  } catch (error) {
+    // Handle any other errors
+    console.error(error);
+    return res
+      .status(500)
+      .send({ error: 'An error occurred while trying to log in.' });
   }
 };
 
