@@ -73,6 +73,8 @@ productRouter
   .get(productController.getProduct)
   .post(productController.addProduct);
 
+productRouter.route('/:product_id').patch(productController.updateProduct);
+
 // Cart Routes
 cartRouter
   .route('/')

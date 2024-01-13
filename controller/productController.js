@@ -88,40 +88,24 @@ exports.addProduct = (req, res) => {
 
 // UPDATE CAUSE
 exports.updateProduct = (req, res) => {
-  Product.findOne({ _id: req.body.productID }).then((product) => {
-    if (!product) {
-      // if no product found send an HTTP status 404 (Not found)
-      return res.sendStatus(404);
-    } else {
-      // Update data base on req.body
-      if (req.body.description) {
-        product.description = req.body.description;
+  Product.findOneAndUpdate(
+    { _id: req.params.product_id },
+    { $set: req.body },
+    { new: true }
+  )
+    .then((product) => {
+      if (!product) {
+        // if no product found send an HTTP status 404 (Not found)
+        return res.sendStatus(404);
+      } else {
+        // Send the updated product as a response
+        return res.json(product);
       }
-      if (req.body.price) {
-        product.price = req.body.price;
-      }
-
-      if (req.body.discountedprice) {
-        product.discountedprice = req.body.discountedprice;
-      }
-
-      if (req.body.image) {
-        product.images = req.body.images;
-      }
-
-      product
-        .save()
-        .then((product) => {
-          if (product) {
-            // If product updated successfyl, send an HTTP status 200
-            res.status(200).send(product._id);
-          }
-        })
-        .catch((err) => {
-          res.status(500).send(err);
-        });
-    }
-  });
+    })
+    .catch((err) => {
+      // Handle any possible database errors
+      return res.status(500).send(err);
+    });
 };
 
 // DELETE CAUSE
