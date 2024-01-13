@@ -23,7 +23,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
-            cd /var/www/furniture_shop/FurnitureShop
+            cd /var/www/furniture_shop/server
             git pull
             curl -X POST -H 'Content-Type: application/json' -H 'Authorization: ${{ secrets.DC_KEY_BOT }}' -d '{"content":"Deploy server success at https://server1.kansan.io.vn"}' https://discord.com/api/v9/channels/1193076191905718392/messages
 
