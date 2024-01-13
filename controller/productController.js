@@ -57,7 +57,7 @@ exports.addProduct = (req, res) => {
     if (!data) {
       const cause = new Product({
         title: req.body.title,
-        description: req.body.description,
+        description: req.body.description || '',
         colors: req.body.colors || [],
         price: req.body.price,
         discountedprice: req.body.discountedprice,
@@ -88,7 +88,7 @@ exports.addProduct = (req, res) => {
 
 // UPDATE CAUSE
 exports.updateProduct = (req, res) => {
-  Cause.findOne({ _id: req.body.productID }).then((product) => {
+  Product.findOne({ _id: req.body.productID }).then((product) => {
     if (!product) {
       // if no product found send an HTTP status 404 (Not found)
       return res.sendStatus(404);
@@ -101,8 +101,12 @@ exports.updateProduct = (req, res) => {
         product.price = req.body.price;
       }
 
+      if (req.body.discountedprice) {
+        product.discountedprice = req.body.discountedprice;
+      }
+
       if (req.body.image) {
-        product.image = req.body.image;
+        product.images = req.body.images;
       }
 
       product
