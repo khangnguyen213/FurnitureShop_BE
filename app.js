@@ -54,7 +54,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/', (req, res, next) => {
-  return res.send('Connected ✔');
+  return res.send('Connected!');
 });
 
 const accountController = require('./controller/accountController');
