@@ -23,7 +23,7 @@ app.set('trust proxy', 1);
 app.use(
   cors({
     origin: '*',
-    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD', 'DELETE'],
+    methods: ['POST', 'PATCH', 'PUT', 'GET', 'OPTIONS', 'HEAD', 'DELETE'],
     credentials: true,
   })
 );
