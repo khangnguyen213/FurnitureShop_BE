@@ -25,6 +25,7 @@ jobs:
           script: |
             cd /var/www/furniture_shop/server
             git pull
+            pm2 reload all
             curl -X POST -H 'Content-Type: application/json' -H 'Authorization: ${{ secrets.DC_KEY_BOT }}' -d '{"content":"Deploy server success at https://server1.kansan.io.vn"}' https://discord.com/api/v9/channels/1193076191905718392/messages
 
     # curl -X POST -H 'Content-Type: application/json' -H 'Authorization: ${{ secrets.DC_KEY }}' -d '{"content":"Deploy success at https://furniture.kansan.io.vn"}' https://discord.com/api/v9/channels/1189872165470871632/messages

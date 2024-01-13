@@ -95,10 +95,11 @@ exports.login = async (req, res) => {
         req.session.account = result;
 
         // Extract the fullname, role, and _id fields from the account object and send them as a response
-        const { fullname, _id } = result;
+        const { fullname, _id, isAdmin } = result;
         return res.status(200).send({
           fullname,
           _id,
+          isAdmin,
         });
       }
     }
