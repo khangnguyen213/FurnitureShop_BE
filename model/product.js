@@ -18,6 +18,8 @@ const productSchema = new mongoose.Schema({
   },
   price: { type: Number, required: true },
   discountedprice: { type: Number },
+  quantity: { type: Number, required: true }, // new field for quantity
+  status: { type: String, enum: ['active', 'inactive'], default: 'active' }, // new field for status
 });
 
 module.exports = mongoose.model('Product', productSchema);

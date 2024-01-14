@@ -62,6 +62,8 @@ exports.addProduct = (req, res) => {
         price: req.body.price,
         discountedprice: req.body.discountedprice,
         images: req.body.images,
+        quantity: req.body.quantity || 0,
+        status: 'active',
       });
       cause
         .save()
@@ -110,12 +112,43 @@ exports.updateProduct = (req, res) => {
 
 // DELETE CAUSE
 exports.deleteProduct = (req, res) => {
-  //find causes base on req.body, delete them by change status to inactive
-  Product.updateMany({ _id: { $in: req.body } }).then((data) => {
-    if (data.modifiedCount > 0) {
-      return res.status(200).send(`Updated ${data.modifiedCount} item(s)`);
-    } else {
-      return res.sendStatus(404);
-    }
-  });
+  Product.findOneAndUpdate(
+    { _id: req.params.product_id },
+    { $set: { status: 'inactive' } },
+    { new: true }
+  )
+    .then((product) => {
+      if (!product) {
+        // if no product found send an HTTP status 404 (Not found)
+        return res.sendStatus(404);
+      } else {
+        // Send the updated product as a response
+        return res.status(200).json(product);
+      }
+    })
+    .catch((err) => {
+      // Handle any possible database errors
+      return res.status(500).send(err);
+    });
 };
+
+// async function updateProducts() {
+//   try {
+//     // Update all documents
+//     await Product.updateMany(
+//       {},
+//       {
+//         $set: {
+//           quantity: 0, // set the default quantity
+//           status: 'active', // set the default status
+//         },
+//       }
+//     );
+
+//     console.log('All products updated successfully');
+//   } catch (error) {
+//     console.error('Error updating products:', error);
+//   }
+// }
+
+// updateProducts();

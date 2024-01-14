@@ -73,7 +73,10 @@ productRouter
   .get(productController.getProduct)
   .post(productController.addProduct);
 
-productRouter.route('/:product_id').patch(productController.updateProduct);
+productRouter
+  .route('/:product_id')
+  .delete(productController.deleteProduct)
+  .patch(productController.updateProduct);
 
 // Cart Routes
 cartRouter
