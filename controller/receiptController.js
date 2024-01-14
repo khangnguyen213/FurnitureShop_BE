@@ -27,8 +27,6 @@ async function createReceipt(req, res) {
 
     for (let item of cart.products) {
       const productDetail = item.product;
-      console.log(productDetail);
-
       const { _id, price, discountedprice, title } = productDetail;
       const quantity = item.quantity;
       totalPayment += (discountedprice || price) * quantity;
@@ -57,14 +55,17 @@ async function createReceipt(req, res) {
       products: [],
     });
 
+    const receipt = {
+      productList: returnProductList,
+      buyername: account.fullname,
+      totalPayment: newReceipt.totalPayment,
+      paymentDate: newReceipt.paymentDate,
+    };
+    sendEmail(receipt, account.email);
+
     return res.status(201).json({
       message: 'Receipt created successfully',
-      receipt: {
-        productList: returnProductList,
-        buyername: account.fullname,
-        totalPayment: newReceipt.totalPayment,
-        paymentDate: newReceipt.paymentDate,
-      },
+      receipt,
     });
   } catch (error) {
     return res
@@ -94,13 +95,63 @@ async function getReceipt(req, res) {
         path: 'productList.product',
         select: 'title price discountedprice', // Assuming 'title' and 'images' are relevant fields in the Product model
       });
-
     return res.status(200).json({ receipts });
   } catch (error) {
     console.log(error);
     return res
       .status(500)
       .json({ message: 'Error fetching receipts', error: error.message });
+  }
+}
+
+function formatMoney(amount) {
+  // Convert the number to a string and split it into parts before and after the decimal point
+  const parts = amount.toString().split('.');
+
+  // Add commas as thousand separators to the part before the decimal point
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+  // Join the parts back together with a period (.) as the decimal separator
+  return parts.join('.');
+}
+
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API);
+
+async function sendEmail(receipt, email) {
+  // Construct the email template data
+
+  const template_data = {
+    fullname: receipt.buyername,
+    products: receipt.productList.map((product) => {
+      return {
+        ...product,
+        price: formatMoney(product.price),
+      };
+    }),
+    total: formatMoney(receipt.totalPayment),
+    date: new Date(receipt.paymentDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZone: 'Asia/Ho_Chi_Minh',
+    }),
+  };
+  console.log(email);
+  try {
+    // Send the email using SendGrid API
+    await sgMail.send({
+      to: email,
+      from: process.env.SENDER_EMAIL,
+      subject: 'FURNIO - RECEIPT',
+      templateId: 'd-244fea92a20249aa9076763462c3fe67',
+      dynamicTemplateData: template_data,
+    });
+  } catch (error) {
+    throw error;
   }
 }
 
