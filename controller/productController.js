@@ -24,6 +24,7 @@ exports.getProduct = (req, res) => {
   //promise to find documents base on findOpts
   const findPromise = Product.find({
     ...findOpts,
+    status: 'active',
   })
     .skip(skip)
     .limit(nPerPage);
@@ -31,6 +32,7 @@ exports.getProduct = (req, res) => {
   //promise to count documents base on findOpts
   const countPromise = Product.countDocuments({
     ...findOpts,
+    status: 'active',
   });
 
   //handle both find and count promise and response
